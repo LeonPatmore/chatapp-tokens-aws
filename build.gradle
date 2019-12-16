@@ -1,0 +1,58 @@
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
+        classpath "net.ltgt.gradle:gradle-apt-plugin:0.4"
+    }
+}
+
+plugins {
+    id 'java'
+}
+
+apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'java-library'
+apply plugin: 'idea'
+apply plugin: "net.ltgt.apt"
+
+group 'leonpatmore'
+version ''
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    // For spring boot handler.
+//    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.2.2.RELEASE'
+//    compile group: 'com.amazonaws.serverless', name: 'aws-serverless-java-container-springboot2', version: '1.4'
+
+    // Compile time dependency management.
+    compile group: 'com.google.dagger', name: 'dagger', version: '2.25.2'
+    apt group: 'com.google.dagger', name: 'dagger-compiler', version: '2.25.2'
+
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.1'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.29'
+    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.29'
+
+    compile group: 'com.amazonaws', name: 'aws-lambda-java-core', version: '1.2.0'
+    compile group: 'com.amazonaws', name: 'aws-java-sdk-api-gateway', version: '1.11.682'
+    compile group: 'com.amazonaws', name: 'aws-java-sdk-ssm', version: '1.11.682'
+
+}
+
+tasks.withType(Jar) {
+    destinationDir = file("$rootDir/build/jars")
+}
+

@@ -1,0 +1,94 @@
+Transform: AWS::Serverless-2016-10-31
+Description: Chatapp Tokens serverless template.
+Globals:
+  Function:
+    Timeout: 20
+    Environment:
+      Variables:
+        CONFIG_PARAM_KEY: "/chatapp-tokens/dev/encrypted"
+Resources:
+
+  GetTokenFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      KmsKeyArn: !GetAtt ParameterStoreEncryptionKey.Arn
+      CodeUri: build/jars/chatapp-tokens-all.jar
+      Runtime: java8
+      Handler: com.chatapp.tokens.handlers.get.GetHandler
+      Role: !GetAtt ParameterStoreRole.Arn
+      Events:
+        GetToken:
+          Type: Api
+          Properties:
+            Path: /{provider}/{id}
+            Method: get
+
+  ParameterStoreRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - 'lambda.amazonaws.com'
+          Action:
+          - 'sts:AssumeRole'
+      ManagedPolicyArns:
+      - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+      Policies:
+      - PolicyName: 'ParameterStoreChatappTokensDev'
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - 'ssm:GetParameter*'
+            Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/chatapp-tokens/dev*'
+
+  ParameterStoreEncryptionKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: 'alias/chatapp-tokens/dev'
+      TargetKeyId: !Ref ParameterStoreEncryptionKey
+
+  ParameterStoreEncryptionKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Enabled: True
+      EnableKeyRotation: True
+      KeyPolicy:
+        Version: '2012-10-17'
+        Statement:
+        - Sid: 'Allow administration of the key'
+          Effect: Allow
+          Principal:
+            AWS:
+            - !Sub 'arn:aws:iam::${AWS::AccountId}:root'
+          Action:
+          - 'kms:Create*'
+          - 'kms:Encrypt'
+          - 'kms:Describe*'
+          - 'kms:Enable*'
+          - 'kms:List*'
+          - 'kms:Put*'
+          - 'kms:Update*'
+          - 'kms:Revoke*'
+          - 'kms:Disable*'
+          - 'kms:Get*'
+          - 'kms:Delete*'
+          - 'kms:ScheduleKeyDeletion'
+          - 'kms:CancelKeyDeletion'
+          Resource: '*'
+        - Sid: 'Allow use of the key'
+          Effect: Allow
+          Principal:
+            AWS: !GetAtt ParameterStoreRole.Arn
+          Action:
+          - 'kms:Encrypt'
+          - 'kms:Decrypt'
+          - 'kms:ReEncrypt*'
+          - 'kms:GenerateDataKey*'
+          - 'kms:DescribeKey'
+          Resource: '*'
