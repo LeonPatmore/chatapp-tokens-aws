@@ -5,8 +5,8 @@ import com.chatapp.tokens.DaggerApplicationComponent;
 import com.chatapp.tokens.aws.SimpleSSMClient;
 import com.chatapp.tokens.utils.DeserializableException;
 import com.chatapp.tokens.utils.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 
@@ -14,7 +14,7 @@ import static com.chatapp.tokens.configuration.Configuration.AWS_REGION;
 
 public class PropertiesLoaderSSM implements PropertiesLoader {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LogManager.getLogger(getClass());
 
     private SimpleSSMClient simpleSSMClient;
 

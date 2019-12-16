@@ -23,7 +23,6 @@ public class GetHandler implements RequestStreamHandler {
     public Configuration configuration;
 
     private final ApplicationComponent applicationComponent;
-//    private final ConfigurationComponent configurationComponent;
 
     public GetHandler() {
         applicationComponent = DaggerApplicationComponent.builder().build();
