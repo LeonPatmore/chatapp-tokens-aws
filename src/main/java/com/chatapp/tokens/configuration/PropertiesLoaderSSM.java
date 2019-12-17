@@ -21,10 +21,8 @@ public class PropertiesLoaderSSM implements PropertiesLoader {
     @Inject
     public JsonUtils jsonUtils;
 
-    private final ApplicationComponent applicationComponent;
-
     public PropertiesLoaderSSM() {
-        applicationComponent = DaggerApplicationComponent.builder().build();
+        ApplicationComponent applicationComponent = DaggerApplicationComponent.builder().build();
         applicationComponent.inject(this);
         this.simpleSSMClient = new SimpleSSMClient(AWS_REGION);
     }

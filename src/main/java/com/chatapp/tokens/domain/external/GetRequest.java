@@ -1,18 +1,12 @@
-package com.chatapp.tokens.handlers.get;
+package com.chatapp.tokens.domain.external;
 
+import com.chatapp.tokens.domain.common.Provider;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+
+@JsonAutoDetect
 public class GetRequest {
 
-    private String httpMethod;
-
     private PathParameters pathParameters;
-
-    public String getHttpMethod() {
-        return httpMethod;
-    }
-
-    public void setHttpMethod(String httpMethod) {
-        this.httpMethod = httpMethod;
-    }
 
     public PathParameters getPathParameters() {
         return pathParameters;
@@ -24,15 +18,15 @@ public class GetRequest {
 
     public class PathParameters {
 
-        private String provider;
+        private Provider provider;
 
         private String id;
 
-        public String getProvider() {
+        public Provider getProvider() {
             return provider;
         }
 
-        public void setProvider(String provider) {
+        public void setProvider(Provider provider) {
             this.provider = provider;
         }
 

@@ -14,7 +14,7 @@ Resources:
         Fn::GetAtt:
         - ParameterStoreEncryptionKey
         - Arn
-      CodeUri: s3://nexmo-tokens/40877239472caaed5f1b435489d9e3b3
+      CodeUri: s3://nexmo-tokens/bd4e4d78712f801904af50b7e4f4f07f
       Runtime: java8
       Handler: com.chatapp.tokens.handlers.get.GetHandler
       Role:
@@ -71,19 +71,7 @@ Resources:
             AWS:
             - Fn::Sub: arn:aws:iam::${AWS::AccountId}:root
           Action:
-          - kms:Create*
-          - kms:Encrypt
-          - kms:Describe*
-          - kms:Enable*
-          - kms:List*
-          - kms:Put*
-          - kms:Update*
-          - kms:Revoke*
-          - kms:Disable*
-          - kms:Get*
-          - kms:Delete*
-          - kms:ScheduleKeyDeletion
-          - kms:CancelKeyDeletion
+          - kms:*
           Resource: '*'
         - Sid: Allow use of the key
           Effect: Allow
