@@ -2,7 +2,7 @@ package com.chatapp.tokens.handlers;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
-import com.chatapp.tokens.domain.external.ErrorResponse;
+import com.chatapp.tokens.domain.external.BadResponse;
 import com.chatapp.tokens.utils.DeserializableException;
 import com.chatapp.tokens.utils.GatewayResponse;
 import com.chatapp.tokens.utils.JsonUtils;
@@ -29,8 +29,8 @@ public abstract class Handler<T> implements RequestStreamHandler {
             GatewayResponse response = handleRequest(request);
             jsonUtils.writeObject(output, response);
         } catch (DeserializableException e) {
-            jsonUtils.writeObject(output, new ErrorResponse("Bad Request",
-                                                            "Could not de-serialize request payload!"));
+            jsonUtils.writeObject(output, new BadResponse("Bad Request",
+                                                          "Could not de-serialize request payload!"));
         }
     }
 

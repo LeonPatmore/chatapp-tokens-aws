@@ -5,11 +5,11 @@ import org.apache.http.HttpStatus;
 
 import java.util.Collections;
 
-public class ErrorResponse extends GatewayResponse {
+public class BadResponse extends GatewayResponse {
 
     private static final int CODE = HttpStatus.SC_BAD_REQUEST;
 
-    public ErrorResponse(String name, String reason) {
+    public BadResponse(String name, String reason) {
         super(new ResponseObject(name, reason), Collections.emptyMap(), CODE);
     }
 

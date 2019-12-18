@@ -6,6 +6,8 @@ Globals:
     Environment:
       Variables:
         CONFIG_PARAM_KEY: "/chatapp-tokens/dev/encrypted"
+        TABLE_NAME: !Ref ChatappTokensTable
+        DB_ENDPOINT_OVERRIDE:
 Resources:
 
   GetTokenFunction:
@@ -15,7 +17,7 @@ Resources:
       CodeUri: build/jars/chatapp-tokens-all.jar
       Runtime: java8
       Handler: com.chatapp.tokens.handlers.get.GetHandler
-      Role: !GetAtt ParameterStoreRole.Arn
+      Role: !GetAtt ParameterStoreDynamoDBRole.Arn
       Events:
         GetToken:
           Type: Api
@@ -23,7 +25,22 @@ Resources:
             Path: /{provider}/{id}
             Method: get
 
-  ParameterStoreRole:
+  CreateTokenFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      KmsKeyArn: !GetAtt ParameterStoreEncryptionKey.Arn
+      CodeUri: build/jars/chatapp-tokens-all.jar
+      Runtime: java8
+      Handler: com.chatapp.tokens.handlers.create.CreateHandler
+      Role: !GetAtt ParameterStoreDynamoDBRole.Arn
+      Events:
+        CreateToken:
+          Type: Api
+          Properties:
+            Path: /create
+            Method: post
+
+  ParameterStoreDynamoDBRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -37,6 +54,7 @@ Resources:
           - 'sts:AssumeRole'
       ManagedPolicyArns:
       - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+      - 'arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess'
       Policies:
       - PolicyName: 'ParameterStoreChatappTokensDev'
         PolicyDocument:
@@ -80,3 +98,13 @@ Resources:
           - 'kms:GenerateDataKey*'
           - 'kms:DescribeKey'
           Resource: '*'
+
+  ChatappTokensTable:
+    Type: AWS::Serverless::SimpleTable
+    TableName: ChatappTokens
+    PrimaryKey:
+      Name: id
+      Type: String
+    ProvisionedThroughput:
+      ReadCapacityUnit: 5
+      WriteCapacityUnits: 5

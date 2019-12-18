@@ -10,7 +10,7 @@ public class ConfigurationModule {
 
     @Provides
     @Singleton
-    public Configuration providerConfiguration() {
+    public Configuration provideConfiguration() {
         return new Configuration();
     }
 

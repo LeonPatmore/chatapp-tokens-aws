@@ -4,7 +4,8 @@
 Jar location: `build/jars/chatapp-tokens-all.jar`
  
 ### Local Testing
-1) `sam local start-api -t sam-cli-template.yaml`
+1) Start DynamoDB: `docker run -p 8000:8000 amazon/dynamodb-local -jar DynamoDBLocal.jar -sharedDb`
+1) Start SAM Local: `sam local start-api -t sam-cli-template.yaml -n local-env-vars.json`
 
 ### Packaging
 1) `sam package --template-file sam-cli-template.yaml --output-template-file packaged.yaml --s3-bucket nexmo-tokens`

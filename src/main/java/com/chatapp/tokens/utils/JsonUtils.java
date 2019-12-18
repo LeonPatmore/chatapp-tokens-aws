@@ -1,5 +1,6 @@
 package com.chatapp.tokens.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -14,6 +15,13 @@ public class JsonUtils {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
+    public String toJson(Object object) throws DeserializableException {
+        try {
+            return objectMapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw new DeserializableException(e);
+        }
+    }
 
     public <T> T getObject(InputStream inputStream, Class<T> valueType) throws DeserializableException {
         try {

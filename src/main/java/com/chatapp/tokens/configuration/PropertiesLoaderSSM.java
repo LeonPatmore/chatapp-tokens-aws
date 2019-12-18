@@ -2,7 +2,7 @@ package com.chatapp.tokens.configuration;
 
 import com.chatapp.tokens.ApplicationComponent;
 import com.chatapp.tokens.DaggerApplicationComponent;
-import com.chatapp.tokens.aws.SimpleSSMClient;
+import com.chatapp.tokens.aws.ssm.SimpleSSMClient;
 import com.chatapp.tokens.utils.DeserializableException;
 import com.chatapp.tokens.utils.JsonUtils;
 import org.apache.logging.log4j.LogManager;

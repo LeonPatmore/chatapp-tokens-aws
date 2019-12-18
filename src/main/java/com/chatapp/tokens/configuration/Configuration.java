@@ -1,16 +1,22 @@
 package com.chatapp.tokens.configuration;
 
+import org.jetbrains.annotations.Nullable;
+
 public class Configuration {
 
-    static final String AWS_REGION = System.getenv("AWS_REGION");
+    public static final String AWS_REGION = System.getenv("AWS_REGION");
+    public static final String TABLE_NAME = System.getenv("TABLE_NAME");
+    @Nullable
+    public static final String DB_ENDPOINT_OVERRIDE = System.getenv("DB_ENDPOINT_OVERRIDE");
 
-    private Properties chatappTokensProperties;
+    private Properties properties;
 
     public Configuration() {
-        this.chatappTokensProperties = new PropertiesLoaderSSM().getProperties();
+        this.properties = new PropertiesLoaderSSM().getProperties();
     }
 
-    public Properties getChatappTokensProperties() {
-        return chatappTokensProperties;
+    public Properties getProperties() {
+        return properties;
     }
+
 }

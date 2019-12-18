@@ -1,4 +1,4 @@
-package com.chatapp.tokens.aws;
+package com.chatapp.tokens.aws.ssm;
 
 import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagement;
 import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagementClient;
@@ -15,7 +15,7 @@ public class SimpleSSMClient {
 
     public SimpleSSMClient(String region) {
         log.info("Creating SSM client in region [ {} ]", region);
-        client = AWSSimpleSystemsManagementClient.builder().withRegion(region).build();
+        this.client = AWSSimpleSystemsManagementClient.builder().withRegion(region).build();
     }
 
     public String getParameter(String key, boolean encrypted) {

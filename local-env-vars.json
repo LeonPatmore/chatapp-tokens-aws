@@ -1,0 +1,10 @@
+{
+    "GetTokenFunction": {
+        "DB_ENDPOINT_OVERRIDE": "http://docker.for.mac.localhost:8000",
+        "TABLE_NAME": "ChatappTokens"
+    },
+    "CreateTokenFunction": {
+        "DB_ENDPOINT_OVERRIDE": "http://docker.for.mac.localhost:8000",
+        "TABLE_NAME": "ChatappTokens"
+    }
+}
