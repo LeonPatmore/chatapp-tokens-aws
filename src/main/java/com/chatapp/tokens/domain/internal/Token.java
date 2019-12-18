@@ -21,10 +21,12 @@ public class Token {
         return id;
     }
 
+    public void setId(String id) {
         this.id = id;
     }
 
     public String getToken() {
+        return token;
     }
 
     public void setToken(String token) {
