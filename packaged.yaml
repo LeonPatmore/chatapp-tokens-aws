@@ -6,6 +6,10 @@ Globals:
     Environment:
       Variables:
         CONFIG_PARAM_KEY: /chatapp-tokens/dev/encrypted
+        TABLE_NAME:
+          Ref: ChatappTokensTable
+        DB_ENDPOINT_OVERRIDE: ''
+        OVERRIDE_DB_ENDPOINT: 'false'
 Resources:
   GetTokenFunction:
     Type: AWS::Serverless::Function
@@ -14,12 +18,12 @@ Resources:
         Fn::GetAtt:
         - ParameterStoreEncryptionKey
         - Arn
-      CodeUri: s3://nexmo-tokens/bd4e4d78712f801904af50b7e4f4f07f
+      CodeUri: s3://nexmo-tokens/8f25f3e996793bc2af5bd0508412c9de
       Runtime: java8
       Handler: com.chatapp.tokens.handlers.get.GetHandler
       Role:
         Fn::GetAtt:
-        - ParameterStoreRole
+        - ParameterStoreDynamoDBRole
         - Arn
       Events:
         GetToken:
@@ -27,7 +31,27 @@ Resources:
           Properties:
             Path: /{provider}/{id}
             Method: get
-  ParameterStoreRole:
+  CreateTokenFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      KmsKeyArn:
+        Fn::GetAtt:
+        - ParameterStoreEncryptionKey
+        - Arn
+      CodeUri: s3://nexmo-tokens/8f25f3e996793bc2af5bd0508412c9de
+      Runtime: java8
+      Handler: com.chatapp.tokens.handlers.create.CreateHandler
+      Role:
+        Fn::GetAtt:
+        - ParameterStoreDynamoDBRole
+        - Arn
+      Events:
+        CreateToken:
+          Type: Api
+          Properties:
+            Path: /create
+            Method: post
+  ParameterStoreDynamoDBRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -41,6 +65,7 @@ Resources:
           - sts:AssumeRole
       ManagedPolicyArns:
       - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
       Policies:
       - PolicyName: ParameterStoreChatappTokensDev
         PolicyDocument:
@@ -78,7 +103,7 @@ Resources:
           Principal:
             AWS:
               Fn::GetAtt:
-              - ParameterStoreRole
+              - ParameterStoreDynamoDBRole
               - Arn
           Action:
           - kms:Encrypt
@@ -87,3 +112,12 @@ Resources:
           - kms:GenerateDataKey*
           - kms:DescribeKey
           Resource: '*'
+  ChatappTokensTable:
+    Type: AWS::Serverless::SimpleTable
+    TableName: ChatappTokens
+    PrimaryKey:
+      Name: id
+      Type: String
+    ProvisionedThroughput:
+      ReadCapacityUnit: 5
+      WriteCapacityUnits: 5

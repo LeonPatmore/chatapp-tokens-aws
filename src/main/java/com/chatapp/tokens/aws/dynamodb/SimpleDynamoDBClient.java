@@ -28,7 +28,7 @@ public class SimpleDynamoDBClient {
     }
 
     private AmazonDynamoDB getAmazonDynamoDB(String region, @Nullable String dbHost) {
-        if (!Objects.isNull(dbHost)) {
+        if (!Objects.isNull(dbHost) ) {
             AwsClientBuilder.EndpointConfiguration endpointConfiguration =
                     new AwsClientBuilder.EndpointConfiguration(dbHost, region);
             return AmazonDynamoDBClientBuilder.standard()

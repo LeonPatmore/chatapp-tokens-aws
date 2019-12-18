@@ -7,7 +7,8 @@ Globals:
       Variables:
         CONFIG_PARAM_KEY: "/chatapp-tokens/dev/encrypted"
         TABLE_NAME: !Ref ChatappTokensTable
-        DB_ENDPOINT_OVERRIDE:
+        DB_ENDPOINT_OVERRIDE: ""
+        OVERRIDE_DB_ENDPOINT: "false"
 Resources:
 
   GetTokenFunction:
@@ -90,7 +91,7 @@ Resources:
         - Sid: 'Allow use of the key'
           Effect: Allow
           Principal:
-            AWS: !GetAtt ParameterStoreRole.Arn
+            AWS: !GetAtt ParameterStoreDynamoDBRole.Arn
           Action:
           - 'kms:Encrypt'
           - 'kms:Decrypt'

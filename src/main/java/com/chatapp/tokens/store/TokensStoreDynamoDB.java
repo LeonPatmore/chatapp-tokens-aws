@@ -11,12 +11,11 @@ import com.chatapp.tokens.domain.common.Provider;
 import com.chatapp.tokens.domain.internal.Token;
 import com.chatapp.tokens.utils.DeserializableException;
 import com.chatapp.tokens.utils.JsonUtils;
+import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 
-import static com.chatapp.tokens.configuration.Configuration.AWS_REGION;
-import static com.chatapp.tokens.configuration.Configuration.DB_ENDPOINT_OVERRIDE;
-import static com.chatapp.tokens.configuration.Configuration.TABLE_NAME;
+import static com.chatapp.tokens.configuration.Configuration.*;
 
 public class TokensStoreDynamoDB implements TokensStore {
 
@@ -31,7 +30,16 @@ public class TokensStoreDynamoDB implements TokensStore {
         ApplicationComponent applicationComponent = DaggerApplicationComponent.builder().build();
         applicationComponent.inject(this);
         this.simpleDynamoTableClient = new SimpleDynamoTableClient(
-                new SimpleDynamoDBClient(AWS_REGION, DB_ENDPOINT_OVERRIDE), TABLE_NAME);
+                new SimpleDynamoDBClient(AWS_REGION, getDBOverride()), TABLE_NAME);
+    }
+
+    @Nullable
+    private static String getDBOverride() {
+        if (Boolean.valueOf(OVERRIDE_DB_ENDPOINT)) {
+            return DB_ENDPOINT_OVERRIDE;
+        } else {
+            return null;
+        }
     }
 
     @Override
