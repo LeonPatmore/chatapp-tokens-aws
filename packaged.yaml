@@ -18,7 +18,7 @@ Resources:
         Fn::GetAtt:
         - ParameterStoreEncryptionKey
         - Arn
-      CodeUri: s3://nexmo-tokens/8f25f3e996793bc2af5bd0508412c9de
+      CodeUri: s3://nexmo-tokens/ab8a2eaeeb5aeb541cbe519f9ab1daff
       Runtime: java8
       Handler: com.chatapp.tokens.handlers.get.GetHandler
       Role:
@@ -38,7 +38,7 @@ Resources:
         Fn::GetAtt:
         - ParameterStoreEncryptionKey
         - Arn
-      CodeUri: s3://nexmo-tokens/8f25f3e996793bc2af5bd0508412c9de
+      CodeUri: s3://nexmo-tokens/ab8a2eaeeb5aeb541cbe519f9ab1daff
       Runtime: java8
       Handler: com.chatapp.tokens.handlers.create.CreateHandler
       Role:
@@ -49,7 +49,7 @@ Resources:
         CreateToken:
           Type: Api
           Properties:
-            Path: /create
+            Path: /create/{provider}
             Method: post
   ParameterStoreDynamoDBRole:
     Type: AWS::IAM::Role

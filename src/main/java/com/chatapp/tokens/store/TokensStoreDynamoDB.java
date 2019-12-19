@@ -56,7 +56,9 @@ public class TokensStoreDynamoDB implements TokensStore {
 
     @Override
     public void putToken(Token token) {
-        simpleDynamoTableClient.putItem(new Item().withPrimaryKey(new PrimaryKey(PRIMARY_KEY_NAME, token.getId()))
+        simpleDynamoTableClient.putItem(new Item().withPrimaryKey(new PrimaryKey(PRIMARY_KEY_NAME,
+                                                                                 getId(token.getProvider(),
+                                                                                       token.getExternalId())))
                                                   .withString("token", token.getToken()));
     }
 

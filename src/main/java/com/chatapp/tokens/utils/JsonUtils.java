@@ -2,10 +2,10 @@ package com.chatapp.tokens.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 public class JsonUtils {
@@ -23,9 +23,9 @@ public class JsonUtils {
         }
     }
 
-    public <T> T getObject(InputStream inputStream, Class<T> valueType) throws DeserializableException {
+    public <T> T getObject(JsonNode jsonNode, Class<T> valueType) throws DeserializableException {
         try {
-            return objectMapper.readValue(inputStream, valueType);
+            return objectMapper.treeToValue(jsonNode, valueType);
         } catch (IOException e) {
             throw new DeserializableException(e);
         }
@@ -44,6 +44,14 @@ public class JsonUtils {
             objectMapper.writeValue(output, object);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public JsonNode getJsonNode(String inputString) throws DeserializableException {
+        try {
+            return objectMapper.readTree(inputString);
+        } catch (JsonProcessingException e) {
+            throw new DeserializableException(e);
         }
     }
 

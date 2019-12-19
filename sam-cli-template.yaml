@@ -38,7 +38,7 @@ Resources:
         CreateToken:
           Type: Api
           Properties:
-            Path: /create
+            Path: /create/{provider}
             Method: post
 
   ParameterStoreDynamoDBRole:

@@ -14,4 +14,10 @@ public class UtilsModule {
         return new JsonUtils();
     }
 
+    @Provides
+    @Singleton
+    public ValidationUtils provideValidationUtils() {
+        return new ValidationUtils();
+    }
+
 }

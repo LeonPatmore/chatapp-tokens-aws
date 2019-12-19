@@ -10,6 +10,7 @@ import com.chatapp.tokens.store.TokensStoreDynamoDB;
 import com.chatapp.tokens.store.TokensStoreModule;
 import com.chatapp.tokens.utils.JsonUtils;
 import com.chatapp.tokens.utils.UtilsModule;
+import com.chatapp.tokens.utils.ValidationUtils;
 import dagger.Component;
 
 import javax.inject.Singleton;
@@ -19,6 +20,8 @@ import javax.inject.Singleton;
 public interface ApplicationComponent {
 
     JsonUtils providerJsonUtils();
+
+    ValidationUtils providerValidationUtils();
 
     Configuration providerConfiguration();
 

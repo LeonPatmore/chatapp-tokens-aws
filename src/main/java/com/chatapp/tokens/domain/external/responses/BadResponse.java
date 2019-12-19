@@ -1,6 +1,6 @@
-package com.chatapp.tokens.domain.external;
+package com.chatapp.tokens.domain.external.responses;
 
-import com.chatapp.tokens.utils.GatewayResponse;
+import com.chatapp.tokens.domain.internal.GatewayResponse;
 import org.apache.http.HttpStatus;
 
 import java.util.Collections;
