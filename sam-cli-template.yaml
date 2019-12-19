@@ -23,7 +23,7 @@ Resources:
         GetToken:
           Type: Api
           Properties:
-            Path: /{provider}/{id}
+            Path: /{provider}/{externalId}
             Method: get
 
   CreateTokenFunction:

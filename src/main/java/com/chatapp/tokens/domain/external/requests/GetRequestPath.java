@@ -4,6 +4,7 @@ import com.chatapp.tokens.domain.common.Provider;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @JsonAutoDetect
 public class GetRequestPath {
@@ -11,6 +12,8 @@ public class GetRequestPath {
     @NotNull
     private Provider provider;
 
+    @NotNull
+    @Size(min=1)
     private String externalId;
 
     public Provider getProvider() {

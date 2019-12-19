@@ -59,7 +59,9 @@ public class TokensStoreDynamoDB implements TokensStore {
         simpleDynamoTableClient.putItem(new Item().withPrimaryKey(new PrimaryKey(PRIMARY_KEY_NAME,
                                                                                  getId(token.getProvider(),
                                                                                        token.getExternalId())))
-                                                  .withString("token", token.getToken()));
+                                                  .withString("token", token.getToken())
+                                                  .withString("provider", token.getProvider().name())
+                                                  .withString("externalId", token.getExternalId()));
     }
 
     private static String getId(Provider provider, String externalId) {
