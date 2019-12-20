@@ -8,7 +8,7 @@ import com.chatapp.tokens.domain.external.responses.BadResponse;
 import com.chatapp.tokens.domain.external.responses.NotFoundResponse;
 import com.chatapp.tokens.domain.internal.GatewayRequest;
 import com.chatapp.tokens.domain.internal.Token;
-import com.chatapp.tokens.handlers.Handler;
+import com.chatapp.tokens.handlers.ApiGatewayHandler;
 import com.chatapp.tokens.store.CannotGetTokenException;
 import com.chatapp.tokens.store.TokensStore;
 import com.chatapp.tokens.store.UnknownTokenException;
@@ -17,7 +17,7 @@ import com.chatapp.tokens.domain.internal.GatewayResponse;
 import javax.inject.Inject;
 import java.util.Collections;
 
-public class GetHandler extends Handler<EmptyRequest, GetRequestPath> {
+public class GetHandler extends ApiGatewayHandler<EmptyRequest, GetRequestPath> {
 
     @Inject
     public TokensStore tokensStore;

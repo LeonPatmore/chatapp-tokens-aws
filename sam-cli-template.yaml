@@ -41,20 +41,35 @@ Resources:
             Path: /create/{provider}
             Method: post
 
-  RenewTokenFunction:
+  RenewTokenFunctionAPI:
     Type: AWS::Serverless::Function
     Properties:
       KmsKeyArn: !GetAtt ParameterStoreEncryptionKey.Arn
       CodeUri: build/jars/chatapp-tokens-all.jar
       Runtime: java8
-      Handler: com.chatapp.tokens.handlers.renew.RenewHandler
+      Handler: com.chatapp.tokens.handlers.renew.RenewHandlerAPI
       Role: !GetAtt ParameterStoreDynamoDBRole.Arn
       Events:
-        CreateToken:
+        RenewTokenAPI:
           Type: Api
           Properties:
             Path: /renew/{provider}/{externalId}
             Method: post
+
+  RenewTokenFunctionSNS:
+    Type: AWS::Serverless::Function
+    Properties:
+      KmsKeyArn: !GetAtt ParameterStoreEncryptionKey.Arn
+      CodeUri: build/jars/chatapp-tokens-all.jar
+      Runtime: java8
+      Handler: com.chatapp.tokens.handlers.renew.RenewHandlerSNS
+      Role: !GetAtt ParameterStoreDynamoDBRole.Arn
+      Events:
+        RenewTokenSNS:
+          Type: SNS
+          Properties:
+            SqsSubscription: False
+            Topic: !Ref ChatappTokensRenewTopic
 
   ParameterStoreDynamoDBRole:
     Type: AWS::IAM::Role
@@ -71,6 +86,7 @@ Resources:
       ManagedPolicyArns:
       - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
       - 'arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess'
+      - 'arn:aws:iam::aws:policy/AmazonSNSFullAccess'
       Policies:
       - PolicyName: 'ParameterStoreChatappTokensDev'
         PolicyDocument:
@@ -124,3 +140,9 @@ Resources:
     ProvisionedThroughput:
       ReadCapacityUnit: 5
       WriteCapacityUnits: 5
+
+  ChatappTokensRenewTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: ChatappTokensRenew
+      TopicName: ChatappTokensRenew

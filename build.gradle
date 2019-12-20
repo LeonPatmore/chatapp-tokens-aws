@@ -50,6 +50,7 @@ dependencies {
     compile group: 'com.amazonaws', name: 'aws-java-sdk-api-gateway', version: '1.11.682'
     compile group: 'com.amazonaws', name: 'aws-java-sdk-ssm', version: '1.11.682'
     compile group: 'com.amazonaws', name: 'aws-java-sdk-dynamodb', version: '1.11.682'
+    compile group: 'com.amazonaws', name: 'aws-lambda-java-events', version: '2.2.7'
 
     // Not null annotation.
     compile group: 'org.jetbrains', name: 'annotations', version: '18.0.0'

@@ -7,7 +7,7 @@ import com.chatapp.tokens.domain.external.requests.CreateRequestPath;
 import com.chatapp.tokens.domain.external.responses.BadResponse;
 import com.chatapp.tokens.domain.internal.GatewayRequest;
 import com.chatapp.tokens.domain.internal.Token;
-import com.chatapp.tokens.handlers.Handler;
+import com.chatapp.tokens.handlers.ApiGatewayHandler;
 import com.chatapp.tokens.store.CannotPutTokenException;
 import com.chatapp.tokens.store.TokensStore;
 import com.chatapp.tokens.domain.internal.GatewayResponse;
@@ -15,7 +15,7 @@ import com.chatapp.tokens.domain.internal.GatewayResponse;
 import javax.inject.Inject;
 import java.util.Collections;
 
-public class CreateHandler extends Handler<CreateRequestBody, CreateRequestPath> {
+public class CreateHandler extends ApiGatewayHandler<CreateRequestBody, CreateRequestPath> {
 
     @Inject
     public TokensStore tokensStore;

@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 import javax.inject.Inject;
 import java.io.*;
 
-public abstract class Handler<T, U> implements RequestStreamHandler {
+public abstract class ApiGatewayHandler<T, U> implements RequestStreamHandler {
 
     private final Logger log = LogManager.getLogger(getClass());
 
@@ -29,26 +29,15 @@ public abstract class Handler<T, U> implements RequestStreamHandler {
 
     private Class<U> targetPathParametersObject;
 
-    public Handler(Class<T> targetBodyObject, Class<U> targetPathParametersObject) {
+    public ApiGatewayHandler(Class<T> targetBodyObject, Class<U> targetPathParametersObject) {
         this.targetBodyObject = targetBodyObject;
         this.targetPathParametersObject = targetPathParametersObject;
     }
 
     @Override
     public void handleRequest(InputStream input, OutputStream output, Context context) {
-
-        StringBuilder textBuilder = new StringBuilder();
-        try (Reader reader = new BufferedReader(new InputStreamReader(input))) {
-            int c;
-            while ((c = reader.read()) != -1) {
-                textBuilder.append((char) c);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String inputStr = textBuilder.toString();
-        System.out.println(inputStr);
-
+        String inputStr = jsonUtils.inputStreamToString(input);
+        log.info("Received input: {}", inputStr);
         GatewayResponse response;
         try {
             JsonNode rootNode = jsonUtils.getJsonNode(inputStr);
@@ -63,6 +52,7 @@ public abstract class Handler<T, U> implements RequestStreamHandler {
             log.error(e);
             response = new BadResponse("Bad Request", "Could not de-serialize request payload!");
         } catch (ConstraintViolationException e) {
+            log.error(e);
             response = new ViolatedResponse(e.getGenericViolations());
         }
         jsonUtils.writeObject(output, response);

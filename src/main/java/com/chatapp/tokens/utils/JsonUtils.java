@@ -6,8 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 
 public class JsonUtils {
 
@@ -56,6 +55,19 @@ public class JsonUtils {
         } catch (JsonProcessingException e) {
             throw new DeserializableException(e);
         }
+    }
+
+    public String inputStreamToString(InputStream inputStream) {
+        StringBuilder textBuilder = new StringBuilder();
+        try (Reader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            int c;
+            while ((c = reader.read()) != -1) {
+                textBuilder.append((char) c);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return textBuilder.toString();
     }
 
 }

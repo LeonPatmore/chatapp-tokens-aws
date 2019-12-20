@@ -66,11 +66,17 @@ Resources:
         - ParameterStoreDynamoDBRole
         - Arn
       Events:
-        CreateToken:
+        RenewTokenAPI:
           Type: Api
           Properties:
             Path: /renew/{provider}/{externalId}
             Method: post
+        RenewTokenSNS:
+          Type: SNS
+          Properties:
+            SqsSubscription: false
+            Topic:
+              Ref: ChatappTokensRenewTopic
   ParameterStoreDynamoDBRole:
     Type: AWS::IAM::Role
     Properties:
@@ -86,6 +92,7 @@ Resources:
       ManagedPolicyArns:
       - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+      - arn:aws:iam::aws:policy/AmazonSNSFullAccess
       Policies:
       - PolicyName: ParameterStoreChatappTokensDev
         PolicyDocument:
@@ -141,3 +148,8 @@ Resources:
     ProvisionedThroughput:
       ReadCapacityUnit: 5
       WriteCapacityUnits: 5
+  ChatappTokensRenewTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: ChatappTokensRenew
+      TopicName: ChatappTokensRenew
