@@ -41,6 +41,21 @@ Resources:
             Path: /create/{provider}
             Method: post
 
+  RenewTokenFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      KmsKeyArn: !GetAtt ParameterStoreEncryptionKey.Arn
+      CodeUri: build/jars/chatapp-tokens-all.jar
+      Runtime: java8
+      Handler: com.chatapp.tokens.handlers.renew.RenewHandler
+      Role: !GetAtt ParameterStoreDynamoDBRole.Arn
+      Events:
+        CreateToken:
+          Type: Api
+          Properties:
+            Path: /renew/{provider}/{externalId}
+            Method: post
+
   ParameterStoreDynamoDBRole:
     Type: AWS::IAM::Role
     Properties:

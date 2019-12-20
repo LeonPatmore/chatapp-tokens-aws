@@ -2,7 +2,6 @@ package com.chatapp.tokens.handlers.create;
 
 import com.chatapp.tokens.ApplicationComponent;
 import com.chatapp.tokens.DaggerApplicationComponent;
-import com.chatapp.tokens.configuration.Configuration;
 import com.chatapp.tokens.domain.external.requests.CreateRequestBody;
 import com.chatapp.tokens.domain.external.requests.CreateRequestPath;
 import com.chatapp.tokens.domain.external.responses.BadResponse;
@@ -17,9 +16,6 @@ import javax.inject.Inject;
 import java.util.Collections;
 
 public class CreateHandler extends Handler<CreateRequestBody, CreateRequestPath> {
-
-    @Inject
-    public Configuration configuration;
 
     @Inject
     public TokensStore tokensStore;

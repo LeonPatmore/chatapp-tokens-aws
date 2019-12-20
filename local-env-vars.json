@@ -8,5 +8,10 @@
         "DB_ENDPOINT_OVERRIDE": "http://docker.for.mac.localhost:8000",
         "TABLE_NAME": "ChatappTokens",
         "OVERRIDE_DB_ENDPOINT": "true"
+    },
+    "RenewTokenFunction": {
+        "DB_ENDPOINT_OVERRIDE": "http://docker.for.mac.localhost:8000",
+        "TABLE_NAME": "ChatappTokens",
+        "OVERRIDE_DB_ENDPOINT": "true"
     }
 }

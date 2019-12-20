@@ -18,7 +18,7 @@ Resources:
         Fn::GetAtt:
         - ParameterStoreEncryptionKey
         - Arn
-      CodeUri: s3://nexmo-tokens/a71713a716562df3891d691052c20580
+      CodeUri: s3://nexmo-tokens/fe2e718367e3bf8f1888f106ca1e7c42
       Runtime: java8
       Handler: com.chatapp.tokens.handlers.get.GetHandler
       Role:
@@ -38,7 +38,7 @@ Resources:
         Fn::GetAtt:
         - ParameterStoreEncryptionKey
         - Arn
-      CodeUri: s3://nexmo-tokens/a71713a716562df3891d691052c20580
+      CodeUri: s3://nexmo-tokens/fe2e718367e3bf8f1888f106ca1e7c42
       Runtime: java8
       Handler: com.chatapp.tokens.handlers.create.CreateHandler
       Role:
@@ -50,6 +50,26 @@ Resources:
           Type: Api
           Properties:
             Path: /create/{provider}
+            Method: post
+  RenewTokenFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      KmsKeyArn:
+        Fn::GetAtt:
+        - ParameterStoreEncryptionKey
+        - Arn
+      CodeUri: s3://nexmo-tokens/fe2e718367e3bf8f1888f106ca1e7c42
+      Runtime: java8
+      Handler: com.chatapp.tokens.handlers.renew.RenewHandler
+      Role:
+        Fn::GetAtt:
+        - ParameterStoreDynamoDBRole
+        - Arn
+      Events:
+        CreateToken:
+          Type: Api
+          Properties:
+            Path: /renew/{provider}/{externalId}
             Method: post
   ParameterStoreDynamoDBRole:
     Type: AWS::IAM::Role

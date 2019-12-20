@@ -5,6 +5,7 @@ import com.chatapp.tokens.configuration.ConfigurationModule;
 import com.chatapp.tokens.configuration.PropertiesLoaderSSM;
 import com.chatapp.tokens.handlers.get.GetHandler;
 import com.chatapp.tokens.handlers.create.CreateHandler;
+import com.chatapp.tokens.handlers.renew.RenewHandler;
 import com.chatapp.tokens.store.TokensStore;
 import com.chatapp.tokens.store.TokensStoreDynamoDB;
 import com.chatapp.tokens.store.TokensStoreModule;
@@ -30,6 +31,8 @@ public interface ApplicationComponent {
     void inject(GetHandler getHandler);
 
     void inject(CreateHandler postHandler);
+
+    void inject(RenewHandler renewHandler);
 
     void inject(PropertiesLoaderSSM propertiesLoaderSSM);
 

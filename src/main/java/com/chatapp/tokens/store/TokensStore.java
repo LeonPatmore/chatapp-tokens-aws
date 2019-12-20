@@ -9,4 +9,6 @@ public interface TokensStore {
 
     void putToken(Token token) throws CannotPutTokenException;
 
+    void updateToken(Token token) throws CannotUpdateTokenException, UnknownTokenException;
+
 }

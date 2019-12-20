@@ -1,43 +1,45 @@
-package com.chatapp.tokens.handlers.get;
+package com.chatapp.tokens.handlers.renew;
 
 import com.chatapp.tokens.ApplicationComponent;
 import com.chatapp.tokens.DaggerApplicationComponent;
 import com.chatapp.tokens.domain.external.requests.EmptyRequest;
-import com.chatapp.tokens.domain.external.requests.GetRequestPath;
-import com.chatapp.tokens.domain.external.responses.BadResponse;
+import com.chatapp.tokens.domain.external.requests.RenewRequestPath;
 import com.chatapp.tokens.domain.external.responses.NotFoundResponse;
+import com.chatapp.tokens.domain.external.responses.ServerErrorResponse;
 import com.chatapp.tokens.domain.internal.GatewayRequest;
+import com.chatapp.tokens.domain.internal.GatewayResponse;
 import com.chatapp.tokens.domain.internal.Token;
 import com.chatapp.tokens.handlers.Handler;
-import com.chatapp.tokens.store.CannotGetTokenException;
+import com.chatapp.tokens.store.CannotUpdateTokenException;
 import com.chatapp.tokens.store.TokensStore;
 import com.chatapp.tokens.store.UnknownTokenException;
-import com.chatapp.tokens.domain.internal.GatewayResponse;
 
 import javax.inject.Inject;
 import java.util.Collections;
 
-public class GetHandler extends Handler<EmptyRequest, GetRequestPath> {
+public class RenewHandler extends Handler<EmptyRequest, RenewRequestPath> {
 
     @Inject
     public TokensStore tokensStore;
 
-    public GetHandler() {
-        super(EmptyRequest.class, GetRequestPath.class);
+    public RenewHandler() {
+        super(EmptyRequest.class, RenewRequestPath.class);
         ApplicationComponent applicationComponent = DaggerApplicationComponent.builder().build();
         applicationComponent.inject(this);
     }
 
     @Override
-    public GatewayResponse handleRequest(GatewayRequest<EmptyRequest, GetRequestPath> input) {
+    protected GatewayResponse handleRequest(GatewayRequest<EmptyRequest, RenewRequestPath> input) {
         try {
-            Token token = tokensStore.getToken(input.getPathParameters().getProvider(),
-                                               input.getPathParameters().getExternalId());
-            return new GatewayResponse(token,
+            Token renewedToken = new Token(input.getPathParameters().getProvider(),
+                                           input.getPathParameters().getExternalId(),
+                                           "renewed-token");
+            tokensStore.updateToken(renewedToken);
+            return new GatewayResponse(renewedToken,
                                        Collections.singletonMap("Content-Type", "application/json"),
                                        200);
-        } catch (CannotGetTokenException e) {
-            return new BadResponse("Internal Problem", "We can not get your token!");
+        } catch (CannotUpdateTokenException e) {
+            return new ServerErrorResponse();
         } catch (UnknownTokenException e) {
             return new NotFoundResponse();
         }
