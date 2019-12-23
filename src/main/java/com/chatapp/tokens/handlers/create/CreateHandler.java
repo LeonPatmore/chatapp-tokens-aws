@@ -5,10 +5,13 @@ import com.chatapp.tokens.DaggerApplicationComponent;
 import com.chatapp.tokens.domain.external.requests.CreateRequestBody;
 import com.chatapp.tokens.domain.external.requests.CreateRequestPath;
 import com.chatapp.tokens.domain.external.responses.BadResponse;
+import com.chatapp.tokens.domain.external.responses.ServerErrorResponse;
 import com.chatapp.tokens.domain.internal.GatewayRequest;
 import com.chatapp.tokens.domain.internal.Token;
 import com.chatapp.tokens.handlers.ApiGatewayHandler;
+import com.chatapp.tokens.scheduler.RenewScheduler;
 import com.chatapp.tokens.store.CannotPutTokenException;
+import com.chatapp.tokens.store.TokenAlreadyExistsException;
 import com.chatapp.tokens.store.TokensStore;
 import com.chatapp.tokens.domain.internal.GatewayResponse;
 
@@ -19,6 +22,9 @@ public class CreateHandler extends ApiGatewayHandler<CreateRequestBody, CreateRe
 
     @Inject
     public TokensStore tokensStore;
+
+    @Inject
+    public RenewScheduler renewScheduler;
 
     public CreateHandler() {
         super(CreateRequestBody.class, CreateRequestPath.class);
@@ -33,11 +39,14 @@ public class CreateHandler extends ApiGatewayHandler<CreateRequestBody, CreateRe
                                        input.getBody().getExternalId(),
                                        "some cool shit!");
             tokensStore.putToken(newToken);
+            renewScheduler.scheduleTokenRenewal(newToken.getProvider(), newToken.getExternalId(), 20);
             return new GatewayResponse(newToken,
                                        Collections.singletonMap("Content-Type", "application/json"),
                                        200);
         } catch (CannotPutTokenException e) {
-            return new BadResponse("Internal Problem", "We can not put your token into the DB!");
+            return new ServerErrorResponse();
+        } catch (TokenAlreadyExistsException e) {
+            return new BadResponse("Token", "already exists") ;
         }
     }
 

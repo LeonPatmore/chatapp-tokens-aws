@@ -1,5 +1,14 @@
 Transform: AWS::Serverless-2016-10-31
 Description: Chatapp Tokens serverless template.
+Parameters:
+  RenewStateMachineName:
+    Type: String
+    Default: ChatappTokensRenew
+    Description: The name of the renew state machine.
+  ChatappTokensTableName:
+    Type: String
+    Default: ChatappTokens
+    Description: The name of the table for Chatapp Tokens.
 Globals:
   Function:
     Timeout: 20
@@ -10,6 +19,9 @@ Globals:
         TABLE_NAME: !Ref ChatappTokensTable
         DB_ENDPOINT_OVERRIDE: ""
         OVERRIDE_DB_ENDPOINT: "false"
+        RENEW_STATE_MACHINE: !Sub
+          - "arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:${RenewStateMachineName}"
+          - RenewStateMachineName: !Ref RenewStateMachineName
 Resources:
 
   GetTokenFunction:
@@ -101,6 +113,14 @@ Resources:
             - "lambda:InvokeAsync"
             - "lambda:InvokeFunction"
             Resource: "*"
+      - PolicyName: 'StateMachineStartExecution'
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: "Allow"
+            Action:
+            - "states:StartExecution"
+            Resource: "*"
 
   ParameterStoreEncryptionKeyAlias:
     Type: AWS::KMS::Alias
@@ -138,7 +158,7 @@ Resources:
 
   ChatappTokensTable:
     Type: AWS::Serverless::SimpleTable
-    TableName: ChatappTokens
+    TableName: !Ref ChatappTokensTableName
     PrimaryKey:
       Name: id
       Type: String
@@ -146,12 +166,12 @@ Resources:
       ReadCapacityUnit: 5
       WriteCapacityUnits: 5
 
-  ChatappTokensRenewMachine:
+  ChatappTokensRenewStateMachine:
     Type: AWS::StepFunctions::StateMachine
     Properties:
       DefinitionString: !Sub
         - "{ \"Comment\": \"An example of the Amazon States Language using wait states\", \"StartAt\": \"Wait\", \"States\": { \"Wait\": { \"Type\": \"Wait\", \"SecondsPath\": \"$.waitSeconds\", \"Next\": \"InvokeRenew\" }, \"InvokeRenew\": { \"Type\": \"Task\", \"Resource\": \"${RenewFunctionArn}\", \"Parameters\": { \"Payload\": { \"externalId.$\": \"$.externalId\", \"provider.$\": \"$.provider\" } }, \"End\": true } } }"
         - RenewFunctionArn: !GetAtt RenewTokenFunctionStateMachine.Arn
       RoleArn: !GetAtt ParameterStoreDynamoDBRole.Arn
-      StateMachineName: ChatappTokensRenew
+      StateMachineName: !Ref RenewStateMachineName
       StateMachineType: STANDARD

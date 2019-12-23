@@ -1,6 +1,7 @@
 package com.chatapp.tokens.aws.dynamodb;
 
 import com.amazonaws.services.dynamodbv2.document.*;
+import com.amazonaws.services.dynamodbv2.document.spec.PutItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException;
 
@@ -22,16 +23,12 @@ public class SimpleDynamoTableClient {
         return item;
     }
 
-    public PutItemOutcome putItem(Item item) {
-        return table.putItem(item);
+    public PutItemOutcome putItem(PutItemSpec putItemSpec) throws ConditionalCheckFailedException {
+        return table.putItem(putItemSpec);
     }
 
-    public UpdateItemOutcome updateItem(UpdateItemSpec updateItemSpec) throws UnknownItemException {
-        try {
-            return table.updateItem(updateItemSpec);
-        } catch (ConditionalCheckFailedException e) {
-            throw new UnknownItemException(e);
-        }
+    public UpdateItemOutcome updateItem(UpdateItemSpec updateItemSpec) throws ConditionalCheckFailedException {
+        return table.updateItem(updateItemSpec);
     }
 
 }
