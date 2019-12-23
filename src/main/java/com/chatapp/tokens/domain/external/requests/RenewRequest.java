@@ -5,7 +5,7 @@ import com.chatapp.tokens.domain.common.Provider;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class RenewRequestSNS {
+public class RenewRequest {
 
     @NotNull
     private Provider provider;

@@ -2,35 +2,40 @@ package com.chatapp.tokens.handlers.renew;
 
 import com.chatapp.tokens.ApplicationComponent;
 import com.chatapp.tokens.DaggerApplicationComponent;
-import com.chatapp.tokens.domain.external.requests.RenewRequestSNS;
-import com.chatapp.tokens.handlers.SNSHandler;
+import com.chatapp.tokens.domain.external.requests.RenewRequest;
+import com.chatapp.tokens.handlers.StateMachineHandler;
 import com.chatapp.tokens.store.CannotUpdateTokenException;
 import com.chatapp.tokens.store.UnknownTokenException;
+import com.chatapp.tokens.utils.JsonUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 
 
-public class RenewHandlerSNS extends SNSHandler<RenewRequestSNS> {
+public class RenewHandlerStateMachine extends StateMachineHandler<RenewRequest> {
 
     private final Logger log = LogManager.getLogger(getClass());
 
     @Inject
+    public JsonUtils jsonUtils;
+
+    @Inject
     public RenewHandler renewHandler;
 
-    public RenewHandlerSNS() {
-        super(RenewRequestSNS.class);
+    public RenewHandlerStateMachine() {
+        super(RenewRequest.class);
         ApplicationComponent applicationComponent = DaggerApplicationComponent.builder().build();
         applicationComponent.inject(this);
     }
 
     @Override
-    public void handleRequest(RenewRequestSNS request) {
+    protected void handleRequest(RenewRequest input) {
         try {
-            renewHandler.renewToken(request.getProvider(), request.getExternalId());
+            renewHandler.renewToken(input.getProvider(), input.getExternalId());
         } catch (CannotUpdateTokenException | UnknownTokenException e) {
-            log.error(e);
+            log.error("Could not renew token!", e);
+            throw new RuntimeException(e);
         }
     }
 

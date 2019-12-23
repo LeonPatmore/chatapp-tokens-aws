@@ -3,6 +3,7 @@ Description: Chatapp Tokens serverless template.
 Globals:
   Function:
     Timeout: 20
+    MemorySize: 640
     Environment:
       Variables:
         CONFIG_PARAM_KEY: "/chatapp-tokens/dev/encrypted"
@@ -56,20 +57,14 @@ Resources:
             Path: /renew/{provider}/{externalId}
             Method: post
 
-  RenewTokenFunctionSNS:
+  RenewTokenFunctionStateMachine:
     Type: AWS::Serverless::Function
     Properties:
       KmsKeyArn: !GetAtt ParameterStoreEncryptionKey.Arn
       CodeUri: build/jars/chatapp-tokens-all.jar
       Runtime: java8
-      Handler: com.chatapp.tokens.handlers.renew.RenewHandlerSNS
+      Handler: com.chatapp.tokens.handlers.renew.RenewHandlerStateMachine
       Role: !GetAtt ParameterStoreDynamoDBRole.Arn
-      Events:
-        RenewTokenSNS:
-          Type: SNS
-          Properties:
-            SqsSubscription: False
-            Topic: !Ref ChatappTokensRenewTopic
 
   ParameterStoreDynamoDBRole:
     Type: AWS::IAM::Role
@@ -81,6 +76,7 @@ Resources:
           Principal:
             Service:
             - 'lambda.amazonaws.com'
+            - 'states.amazonaws.com'
           Action:
           - 'sts:AssumeRole'
       ManagedPolicyArns:
@@ -96,6 +92,15 @@ Resources:
             Action:
             - 'ssm:GetParameter*'
             Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/chatapp-tokens/dev*'
+      - PolicyName: 'LambdaInvoke'
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - "lambda:InvokeAsync"
+            - "lambda:InvokeFunction"
+            Resource: "*"
 
   ParameterStoreEncryptionKeyAlias:
     Type: AWS::KMS::Alias
@@ -141,8 +146,12 @@ Resources:
       ReadCapacityUnit: 5
       WriteCapacityUnits: 5
 
-  ChatappTokensRenewTopic:
-    Type: AWS::SNS::Topic
+  ChatappTokensRenewMachine:
+    Type: AWS::StepFunctions::StateMachine
     Properties:
-      DisplayName: ChatappTokensRenew
-      TopicName: ChatappTokensRenew
+      DefinitionString: !Sub
+        - "{ \"Comment\": \"An example of the Amazon States Language using wait states\", \"StartAt\": \"Wait\", \"States\": { \"Wait\": { \"Type\": \"Wait\", \"SecondsPath\": \"$.waitSeconds\", \"Next\": \"InvokeRenew\" }, \"InvokeRenew\": { \"Type\": \"Task\", \"Resource\": \"${RenewFunctionArn}\", \"Parameters\": { \"Payload\": { \"externalId.$\": \"$.externalId\", \"provider.$\": \"$.provider\" } }, \"End\": true } } }"
+        - RenewFunctionArn: !GetAtt RenewTokenFunctionStateMachine.Arn
+      RoleArn: !GetAtt ParameterStoreDynamoDBRole.Arn
+      StateMachineName: ChatappTokensRenew
+      StateMachineType: STANDARD

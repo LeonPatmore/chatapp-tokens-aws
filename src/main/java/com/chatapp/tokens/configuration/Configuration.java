@@ -11,6 +11,7 @@ public class Configuration {
     public static final String TABLE_NAME = System.getenv("TABLE_NAME");
     public static final String DB_ENDPOINT_OVERRIDE = System.getenv("DB_ENDPOINT_OVERRIDE");
     public static final String OVERRIDE_DB_ENDPOINT = System.getenv("OVERRIDE_DB_ENDPOINT");
+    public static final String RENEW_STATE_MACHINE = System.getenv("RENEW_STATE_MACHINE");
 
     private Properties properties;
 

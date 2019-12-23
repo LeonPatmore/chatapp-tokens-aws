@@ -1,0 +1,22 @@
+{
+    "Comment": "An example of the Amazon States Language using wait states",
+    "StartAt": "Wait",
+    "States": {
+        "Wait": {
+            "Type": "Wait",
+            "SecondsPath": "$.waitSeconds",
+            "Next": "InvokeRenew"
+        },
+        "InvokeRenew": {
+            "Type": "Task",
+            "Resource": "${RenewFunctionArn}",
+            "Parameters": {
+                "Payload": {
+                    "externalId.$": "$.externalId",
+                    "provider.$": "$.provider"
+                }
+            },
+            "End": true
+        }
+    }
+}

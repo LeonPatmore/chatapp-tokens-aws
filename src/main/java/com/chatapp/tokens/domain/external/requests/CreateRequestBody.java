@@ -1,5 +1,6 @@
 package com.chatapp.tokens.domain.external.requests;
 
+import com.chatapp.tokens.domain.internal.TokenCredentials;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 import javax.validation.constraints.NotNull;
@@ -7,27 +8,17 @@ import javax.validation.constraints.NotNull;
 @JsonAutoDetect
 public class CreateRequestBody {
 
-    private String username;
-
-    private String password;
+    private TokenCredentials credentials;
 
     @NotNull
     private String externalId;
 
-    public String getUsername() {
-        return username;
+    public TokenCredentials getCredentials() {
+        return credentials;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setCredentials(TokenCredentials credentials) {
+        this.credentials = credentials;
     }
 
     public String getExternalId() {

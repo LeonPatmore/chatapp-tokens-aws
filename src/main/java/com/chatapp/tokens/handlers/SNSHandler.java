@@ -43,6 +43,6 @@ public abstract class SNSHandler<T> implements RequestHandler<SNSEvent, Void> {
         return null;
     }
 
-    public abstract void handleRequest(T request);
+    protected abstract void handleRequest(T input);
 
 }

@@ -1,6 +1,7 @@
 package com.chatapp.tokens.store;
 
 import com.amazonaws.services.dynamodbv2.document.AttributeUpdate;
+import com.amazonaws.services.dynamodbv2.document.Expected;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.PrimaryKey;
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
@@ -75,19 +76,26 @@ public class TokensStoreDynamoDB implements TokensStore {
     }
 
     @Override
-    public void updateToken(Token token) {
+    public void updateToken(Token token) throws UnknownTokenException {
         PrimaryKey primaryKey = getPrimaryKey(token);
         log.info("Updating token with primary key [ {} ]", primaryKey.toString());
         Map<String, String> expressionAttributeNames = new HashMap<>();
         expressionAttributeNames.put("#T", "token");
+        expressionAttributeNames.put("#I", PRIMARY_KEY_NAME);
         Map<String, Object> expressionAttributeValues = new HashMap<>();
         expressionAttributeValues.put(":val1", token.getToken());
+        expressionAttributeValues.put(":primaryKeyValue", getPrimaryKeyValue(token));
         UpdateItemSpec updateItemSpec = new UpdateItemSpec()
                 .withPrimaryKey(primaryKey)
                 .withUpdateExpression("set #T = :val1")
+                .withConditionExpression("#I = :primaryKeyValue")
                 .withValueMap(expressionAttributeValues)
                 .withNameMap(expressionAttributeNames);
-        simpleDynamoTableClient.updateItem(updateItemSpec);
+        try {
+            simpleDynamoTableClient.updateItem(updateItemSpec);
+        } catch (UnknownItemException e) {
+            throw new UnknownTokenException("Can not find Token in DB!", e);
+        }
     }
 
     private static AttributeUpdate[] getAttributeUpdates(Token token) {
@@ -95,8 +103,12 @@ public class TokensStoreDynamoDB implements TokensStore {
         return new AttributeUpdate[]{tokenUpdate};
     }
 
+    private static String getPrimaryKeyValue(Token token) {
+        return getId(token.getProvider(), token.getExternalId());
+    }
+
     private static PrimaryKey getPrimaryKey(Token token) {
-        return new PrimaryKey(PRIMARY_KEY_NAME, getId(token.getProvider(), token.getExternalId()));
+        return new PrimaryKey(PRIMARY_KEY_NAME, getPrimaryKeyValue(token));
     }
 
     private static PrimaryKey getPrimaryKey(Provider provider, String externalId) {

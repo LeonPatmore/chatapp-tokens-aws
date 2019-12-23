@@ -8,7 +8,10 @@ import com.chatapp.tokens.handlers.get.GetHandler;
 import com.chatapp.tokens.handlers.renew.RenewHandler;
 import com.chatapp.tokens.handlers.renew.RenewHandlerAPI;
 import com.chatapp.tokens.handlers.renew.RenewHandlerModule;
-import com.chatapp.tokens.handlers.renew.RenewHandlerSNS;
+import com.chatapp.tokens.handlers.renew.RenewHandlerStateMachine;
+import com.chatapp.tokens.scheduler.RenewScheduler;
+import com.chatapp.tokens.scheduler.RenewSchedulerModule;
+import com.chatapp.tokens.scheduler.RenewSchedulerStateMachine;
 import com.chatapp.tokens.store.TokensStore;
 import com.chatapp.tokens.store.TokensStoreDynamoDB;
 import com.chatapp.tokens.store.TokensStoreModule;
@@ -19,7 +22,11 @@ import dagger.Component;
 
 import javax.inject.Singleton;
 
-@Component(modules = {UtilsModule.class, ConfigurationModule.class, TokensStoreModule.class, RenewHandlerModule.class})
+@Component(modules = {UtilsModule.class,
+                      ConfigurationModule.class,
+                      TokensStoreModule.class,
+                      RenewHandlerModule.class,
+                      RenewSchedulerModule.class})
 @Singleton
 public interface ApplicationComponent {
 
@@ -33,6 +40,8 @@ public interface ApplicationComponent {
 
     RenewHandler providerRenewHandler();
 
+    RenewScheduler providerRenewScheduler();
+
     void inject(GetHandler getHandler);
 
     void inject(CreateHandler postHandler);
@@ -41,10 +50,12 @@ public interface ApplicationComponent {
 
     void inject(RenewHandlerAPI renewHandlerApi);
 
-    void inject(RenewHandlerSNS renewHandlerSns);
+    void inject(RenewHandlerStateMachine renewHandlerStateMachine);
 
     void inject(PropertiesLoaderSSM propertiesLoaderSSM);
 
     void inject(TokensStoreDynamoDB tokensStoreDynamoDB);
+
+    void inject(RenewSchedulerStateMachine renewSchedulerStateMachine);
 
 }

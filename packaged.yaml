@@ -3,6 +3,7 @@ Description: Chatapp Tokens serverless template.
 Globals:
   Function:
     Timeout: 20
+    MemorySize: 640
     Environment:
       Variables:
         CONFIG_PARAM_KEY: /chatapp-tokens/dev/encrypted
@@ -18,7 +19,7 @@ Resources:
         Fn::GetAtt:
         - ParameterStoreEncryptionKey
         - Arn
-      CodeUri: s3://nexmo-tokens/fe2e718367e3bf8f1888f106ca1e7c42
+      CodeUri: s3://nexmo-tokens/d039115a2126ae52fc712c78d5dbcc2d
       Runtime: java8
       Handler: com.chatapp.tokens.handlers.get.GetHandler
       Role:
@@ -38,7 +39,7 @@ Resources:
         Fn::GetAtt:
         - ParameterStoreEncryptionKey
         - Arn
-      CodeUri: s3://nexmo-tokens/fe2e718367e3bf8f1888f106ca1e7c42
+      CodeUri: s3://nexmo-tokens/d039115a2126ae52fc712c78d5dbcc2d
       Runtime: java8
       Handler: com.chatapp.tokens.handlers.create.CreateHandler
       Role:
@@ -51,16 +52,16 @@ Resources:
           Properties:
             Path: /create/{provider}
             Method: post
-  RenewTokenFunction:
+  RenewTokenFunctionAPI:
     Type: AWS::Serverless::Function
     Properties:
       KmsKeyArn:
         Fn::GetAtt:
         - ParameterStoreEncryptionKey
         - Arn
-      CodeUri: s3://nexmo-tokens/fe2e718367e3bf8f1888f106ca1e7c42
+      CodeUri: s3://nexmo-tokens/d039115a2126ae52fc712c78d5dbcc2d
       Runtime: java8
-      Handler: com.chatapp.tokens.handlers.renew.RenewHandler
+      Handler: com.chatapp.tokens.handlers.renew.RenewHandlerAPI
       Role:
         Fn::GetAtt:
         - ParameterStoreDynamoDBRole
@@ -71,12 +72,20 @@ Resources:
           Properties:
             Path: /renew/{provider}/{externalId}
             Method: post
-        RenewTokenSNS:
-          Type: SNS
-          Properties:
-            SqsSubscription: false
-            Topic:
-              Ref: ChatappTokensRenewTopic
+  RenewTokenFunctionStateMachine:
+    Type: AWS::Serverless::Function
+    Properties:
+      KmsKeyArn:
+        Fn::GetAtt:
+        - ParameterStoreEncryptionKey
+        - Arn
+      CodeUri: s3://nexmo-tokens/d039115a2126ae52fc712c78d5dbcc2d
+      Runtime: java8
+      Handler: com.chatapp.tokens.handlers.renew.RenewHandlerStateMachine
+      Role:
+        Fn::GetAtt:
+        - ParameterStoreDynamoDBRole
+        - Arn
   ParameterStoreDynamoDBRole:
     Type: AWS::IAM::Role
     Properties:
@@ -87,6 +96,7 @@ Resources:
           Principal:
             Service:
             - lambda.amazonaws.com
+            - states.amazonaws.com
           Action:
           - sts:AssumeRole
       ManagedPolicyArns:
@@ -103,6 +113,15 @@ Resources:
             - ssm:GetParameter*
             Resource:
               Fn::Sub: arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/chatapp-tokens/dev*
+      - PolicyName: LambdaInvoke
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - lambda:InvokeAsync
+            - lambda:InvokeFunction
+            Resource: '*'
   ParameterStoreEncryptionKeyAlias:
     Type: AWS::KMS::Alias
     Properties:
@@ -148,8 +167,23 @@ Resources:
     ProvisionedThroughput:
       ReadCapacityUnit: 5
       WriteCapacityUnits: 5
-  ChatappTokensRenewTopic:
-    Type: AWS::SNS::Topic
+  ChatappTokensRenewMachine:
+    Type: AWS::StepFunctions::StateMachine
     Properties:
-      DisplayName: ChatappTokensRenew
-      TopicName: ChatappTokensRenew
+      DefinitionString:
+        Fn::Sub:
+        - '{ "Comment": "An example of the Amazon States Language using wait states",
+          "StartAt": "Wait", "States": { "Wait": { "Type": "Wait", "SecondsPath":
+          "$.waitSeconds", "Next": "InvokeRenew" }, "InvokeRenew": { "Type": "Task",
+          "Resource": "${RenewFunctionArn}", "Parameters": { "Payload": { "externalId.$":
+          "$.externalId", "provider.$": "$.provider" } }, "End": true } } }'
+        - RenewFunctionArn:
+            Fn::GetAtt:
+            - RenewTokenFunctionStateMachine
+            - Arn
+      RoleArn:
+        Fn::GetAtt:
+        - ParameterStoreDynamoDBRole
+        - Arn
+      StateMachineName: ChatappTokensRenew
+      StateMachineType: STANDARD

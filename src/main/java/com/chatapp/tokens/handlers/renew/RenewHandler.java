@@ -21,7 +21,7 @@ public class RenewHandler {
     }
 
     public Token renewToken(Provider provider, String externalId) throws CannotUpdateTokenException,
-                                                                        UnknownTokenException {
+                                                                         UnknownTokenException {
         Token renewedToken = new Token(provider, externalId, "renewed-token");
         tokensStore.updateToken(renewedToken);
         return renewedToken;
