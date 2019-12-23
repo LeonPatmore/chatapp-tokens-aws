@@ -5,10 +5,14 @@ Parameters:
     Type: String
     Default: ChatappTokensRenew
     Description: The name of the renew state machine.
-  ChatappTokensTableName:
+  ChatappTokensTableNameTokens:
     Type: String
-    Default: ChatappTokens
-    Description: The name of the table for Chatapp Tokens.
+    Default: ChatappTokensTokens
+    Description: The name of the table for the tokens of Chatapp Tokens.
+  ChatappTokensTableNameScheduler:
+    Type: String
+    Default: ChatappTokensScheduler
+    Description: The name of the table for the scheduler of Chatapp Tokens.
 Globals:
   Function:
     Timeout: 20
@@ -16,7 +20,8 @@ Globals:
     Environment:
       Variables:
         CONFIG_PARAM_KEY: "/chatapp-tokens/dev/encrypted"
-        TABLE_NAME: !Ref ChatappTokensTable
+        TABLE_NAME_TOKENS: !Ref ChatappTokensTableTokens
+        TABLE_NAME_SCHEDULER: !Ref ChatappTokensTableScheduler
         DB_ENDPOINT_OVERRIDE: ""
         OVERRIDE_DB_ENDPOINT: "false"
         RENEW_STATE_MACHINE: !Sub
@@ -156,9 +161,19 @@ Resources:
           - 'kms:DescribeKey'
           Resource: '*'
 
-  ChatappTokensTable:
+  ChatappTokensTableTokens:
     Type: AWS::Serverless::SimpleTable
-    TableName: !Ref ChatappTokensTableName
+    TableName: !Ref ChatappTokensTableNameTokens
+    PrimaryKey:
+      Name: id
+      Type: String
+    ProvisionedThroughput:
+      ReadCapacityUnit: 5
+      WriteCapacityUnits: 5
+
+  ChatappTokensTableScheduler:
+    Type: AWS::Serverless::SimpleTable
+    TableName: !Ref ChatappTokensTableNameScheduler
     PrimaryKey:
       Name: id
       Type: String

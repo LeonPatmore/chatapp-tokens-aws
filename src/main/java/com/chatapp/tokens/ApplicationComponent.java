@@ -9,9 +9,7 @@ import com.chatapp.tokens.handlers.renew.RenewHandler;
 import com.chatapp.tokens.handlers.renew.RenewHandlerAPI;
 import com.chatapp.tokens.handlers.renew.RenewHandlerModule;
 import com.chatapp.tokens.handlers.renew.RenewHandlerStateMachine;
-import com.chatapp.tokens.scheduler.RenewScheduler;
-import com.chatapp.tokens.scheduler.RenewSchedulerModule;
-import com.chatapp.tokens.scheduler.RenewSchedulerStateMachine;
+import com.chatapp.tokens.scheduler.*;
 import com.chatapp.tokens.store.TokensStore;
 import com.chatapp.tokens.store.TokensStoreDynamoDB;
 import com.chatapp.tokens.store.TokensStoreModule;
@@ -42,6 +40,8 @@ public interface ApplicationComponent {
 
     RenewScheduler providerRenewScheduler();
 
+    RenewSchedulerStore providerRenewSchedulerStore();
+
     void inject(GetHandler getHandler);
 
     void inject(CreateHandler postHandler);
@@ -57,5 +57,7 @@ public interface ApplicationComponent {
     void inject(TokensStoreDynamoDB tokensStoreDynamoDB);
 
     void inject(RenewSchedulerStateMachine renewSchedulerStateMachine);
+
+    void inject(RenewSchedulerStoreDynamoDB renewSchedulerStoreDynamoDB);
 
 }

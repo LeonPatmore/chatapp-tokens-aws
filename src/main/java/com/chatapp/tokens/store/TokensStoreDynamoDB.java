@@ -16,11 +16,9 @@ import com.chatapp.tokens.utils.DeserializableException;
 import com.chatapp.tokens.utils.JsonUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,26 +46,27 @@ public class TokensStoreDynamoDB implements TokensStore {
     TokensStoreDynamoDB() {
         ApplicationComponent applicationComponent = DaggerApplicationComponent.builder().build();
         applicationComponent.inject(this);
-        this.simpleDynamoTableClient = new SimpleDynamoTableClient(
-                new SimpleDynamoDBClient(AWS_REGION, getDBOverride()), TABLE_NAME);
+        this.simpleDynamoTableClient = new SimpleDynamoTableClient(new SimpleDynamoDBClient(AWS_REGION),
+                                                                   TABLE_NAME_TOKENS);
     }
 
-    @Nullable
-    private static String getDBOverride() {
-        if (Boolean.valueOf(OVERRIDE_DB_ENDPOINT)) {
-            return DB_ENDPOINT_OVERRIDE;
-        } else {
-            return null;
+    @Override
+    public void ensureTokenNotExisting(Provider provider, String externalId) throws TokenAlreadyExistsException {
+        try {
+            simpleDynamoTableClient.getItem(getPrimaryKey(provider, externalId));
+            throw new TokenAlreadyExistsException("Token already exists in DB!", null);
+        } catch (UnknownItemException ignored) {
+            // This is expected by the method.
         }
     }
 
     @Override
-    public Token getToken(Provider provider, String externalId) throws CannotGetTokenException, UnknownTokenException {
+    public Token getToken(Provider provider, String externalId) throws UnknownTokenException {
         try {
             Item item = simpleDynamoTableClient.getItem(getPrimaryKey(provider, externalId));
             return jsonUtils.getObject(item.toJSON(), Token.class);
         } catch (DeserializableException e) {
-            throw new CannotGetTokenException("Entry in DynamoDB is not de-serializable!", e);
+            throw new RuntimeException(e);
         } catch (UnknownItemException e) {
             throw new UnknownTokenException("Token can not be found in DynamoDB!", e);
         }

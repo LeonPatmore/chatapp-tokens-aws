@@ -10,7 +10,6 @@ import com.chatapp.tokens.domain.internal.GatewayRequest;
 import com.chatapp.tokens.domain.internal.GatewayResponse;
 import com.chatapp.tokens.domain.internal.Token;
 import com.chatapp.tokens.handlers.ApiGatewayHandler;
-import com.chatapp.tokens.store.CannotUpdateTokenException;
 import com.chatapp.tokens.store.UnknownTokenException;
 
 import javax.inject.Inject;
@@ -35,8 +34,6 @@ public class RenewHandlerAPI extends ApiGatewayHandler<EmptyRequest, RenewReques
             return new GatewayResponse(renewedToken,
                                        Collections.singletonMap("Content-Type", "application/json"),
                                        200);
-        } catch (CannotUpdateTokenException e) {
-            return new ServerErrorResponse();
         } catch (UnknownTokenException e) {
             return new NotFoundResponse();
         }

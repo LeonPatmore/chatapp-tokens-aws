@@ -4,14 +4,12 @@ import com.chatapp.tokens.ApplicationComponent;
 import com.chatapp.tokens.DaggerApplicationComponent;
 import com.chatapp.tokens.domain.external.requests.RenewRequest;
 import com.chatapp.tokens.handlers.StateMachineHandler;
-import com.chatapp.tokens.store.CannotUpdateTokenException;
 import com.chatapp.tokens.store.UnknownTokenException;
 import com.chatapp.tokens.utils.JsonUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
-
 
 public class RenewHandlerStateMachine extends StateMachineHandler<RenewRequest> {
 
@@ -33,7 +31,7 @@ public class RenewHandlerStateMachine extends StateMachineHandler<RenewRequest> 
     protected void handleRequest(RenewRequest input) {
         try {
             renewHandler.renewToken(input.getProvider(), input.getExternalId());
-        } catch (CannotUpdateTokenException | UnknownTokenException e) {
+        } catch (UnknownTokenException e) {
             log.error("Could not renew token!", e);
             throw new RuntimeException(e);
         }

@@ -14,4 +14,10 @@ public class RenewSchedulerModule {
         return new RenewSchedulerStateMachine();
     }
 
+    @Provides
+    @Singleton
+    public RenewSchedulerStore provideRenewSchedulerStore() {
+        return new RenewSchedulerStoreDynamoDB();
+    }
+
 }

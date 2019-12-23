@@ -11,15 +11,18 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+import static com.chatapp.tokens.configuration.Configuration.DB_ENDPOINT_OVERRIDE;
+import static com.chatapp.tokens.configuration.Configuration.OVERRIDE_DB_ENDPOINT;
+
 public class SimpleDynamoDBClient {
 
     private final Logger log = LogManager.getLogger(getClass());
 
     private DynamoDB dynamoDB;
 
-    public SimpleDynamoDBClient(String region, @Nullable String dbHost) {
+    public SimpleDynamoDBClient(String region) {
         log.info("Creating DynamoDB client in region [ {} ]", region);
-        this.dynamoDB = new DynamoDB(getAmazonDynamoDB(region, dbHost));
+        this.dynamoDB = new DynamoDB(getAmazonDynamoDB(region, getDBOverride()));
     }
 
     Table getTable(String tableName) {
@@ -36,6 +39,15 @@ public class SimpleDynamoDBClient {
                                               .build();
         } else {
             return AmazonDynamoDBClientBuilder.standard().withRegion(region).build();
+        }
+    }
+
+    @Nullable
+    private static String getDBOverride() {
+        if (Boolean.valueOf(OVERRIDE_DB_ENDPOINT)) {
+            return DB_ENDPOINT_OVERRIDE;
+        } else {
+            return null;
         }
     }
 

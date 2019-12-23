@@ -5,10 +5,12 @@ import com.chatapp.tokens.domain.internal.Token;
 
 public interface TokensStore {
 
-    Token getToken(Provider provider, String externalId) throws CannotGetTokenException, UnknownTokenException;
+    void ensureTokenNotExisting(Provider provider, String externalId) throws TokenAlreadyExistsException;
 
-    void putToken(Token token) throws CannotPutTokenException, TokenAlreadyExistsException;
+    Token getToken(Provider provider, String externalId) throws UnknownTokenException;
 
-    void updateToken(Token token) throws CannotUpdateTokenException, UnknownTokenException;
+    void putToken(Token token) throws TokenAlreadyExistsException;
+
+    void updateToken(Token token) throws UnknownTokenException;
 
 }
