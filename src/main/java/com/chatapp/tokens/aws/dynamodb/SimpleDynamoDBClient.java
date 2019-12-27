@@ -21,7 +21,6 @@ public class SimpleDynamoDBClient {
     private DynamoDB dynamoDB;
 
     public SimpleDynamoDBClient(String region) {
-        log.info("Creating DynamoDB client in region [ {} ]", region);
         this.dynamoDB = new DynamoDB(getAmazonDynamoDB(region, getDBOverride()));
     }
 
@@ -32,12 +31,14 @@ public class SimpleDynamoDBClient {
 
     private AmazonDynamoDB getAmazonDynamoDB(String region, @Nullable String dbHost) {
         if (!Objects.isNull(dbHost) ) {
+            log.info("Creating DynamoDB client in region [ {} ], host [ {} ]", region, dbHost);
             AwsClientBuilder.EndpointConfiguration endpointConfiguration =
                     new AwsClientBuilder.EndpointConfiguration(dbHost, region);
             return AmazonDynamoDBClientBuilder.standard()
                                               .withEndpointConfiguration(endpointConfiguration)
                                               .build();
         } else {
+            log.info("Creating DynamoDB client in region [ {} ], standard client!", region);
             return AmazonDynamoDBClientBuilder.standard().withRegion(region).build();
         }
     }

@@ -3,7 +3,6 @@ package com.chatapp.tokens.scheduler;
 import com.chatapp.tokens.ApplicationComponent;
 import com.chatapp.tokens.DaggerApplicationComponent;
 import com.chatapp.tokens.aws.statemachine.SimpleStateMachineClient;
-import com.chatapp.tokens.configuration.Configuration;
 import com.chatapp.tokens.domain.common.Provider;
 import com.chatapp.tokens.domain.internal.Token;
 import com.chatapp.tokens.utils.DeserializableException;
@@ -13,6 +12,9 @@ import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import java.util.UUID;
+
+import static com.chatapp.tokens.configuration.Configuration.AWS_REGION;
+import static com.chatapp.tokens.configuration.Configuration.RENEW_STATE_MACHINE;
 
 public class RenewSchedulerStateMachine implements RenewScheduler {
 
@@ -29,7 +31,7 @@ public class RenewSchedulerStateMachine implements RenewScheduler {
     public RenewSchedulerStateMachine() {
         ApplicationComponent applicationComponent = DaggerApplicationComponent.builder().build();
         applicationComponent.inject(this);
-        this.simpleStateMachineClient = new SimpleStateMachineClient(Configuration.RENEW_STATE_MACHINE);
+        this.simpleStateMachineClient = new SimpleStateMachineClient(AWS_REGION, RENEW_STATE_MACHINE);
     }
 
     @Override

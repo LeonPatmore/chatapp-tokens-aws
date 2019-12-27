@@ -3,24 +3,36 @@
         "DB_ENDPOINT_OVERRIDE": "http://docker.for.mac.localhost:8000",
         "TABLE_NAME_TOKENS": "ChatappTokens",
         "TABLE_NAME_SCHEDULER": "ChatappTokensScheduler",
-        "OVERRIDE_DB_ENDPOINT": "true"
+        "OVERRIDE_DB_ENDPOINT": "true",
+        "STATE_MACHINE_ENDPOINT_OVERRIDE": "http://docker.for.mac.localhost:8083",
+        "OVERRIDE_STATE_MACHINE_ENDPOINT": "true",
+        "RENEW_STATE_MACHINE": "arn:aws:states:us-east-1:123456789012:stateMachine:ChatappTokensRenew"
     },
     "CreateTokenFunction": {
         "DB_ENDPOINT_OVERRIDE": "http://docker.for.mac.localhost:8000",
         "TABLE_NAME_TOKENS": "ChatappTokens",
         "TABLE_NAME_SCHEDULER": "ChatappTokensScheduler",
-        "OVERRIDE_DB_ENDPOINT": "true"
+        "OVERRIDE_DB_ENDPOINT": "true",
+        "STATE_MACHINE_ENDPOINT_OVERRIDE": "http://docker.for.mac.localhost:8083",
+        "OVERRIDE_STATE_MACHINE_ENDPOINT": "true",
+        "RENEW_STATE_MACHINE": "arn:aws:states:us-east-1:123456789012:stateMachine:ChatappTokensRenew"
     },
     "RenewTokenFunctionAPI": {
         "DB_ENDPOINT_OVERRIDE": "http://docker.for.mac.localhost:8000",
         "TABLE_NAME_TOKENS": "ChatappTokens",
         "TABLE_NAME_SCHEDULER": "ChatappTokensScheduler",
-        "OVERRIDE_DB_ENDPOINT": "true"
+        "OVERRIDE_DB_ENDPOINT": "true",
+        "STATE_MACHINE_ENDPOINT_OVERRIDE": "http://docker.for.mac.localhost:8083",
+        "OVERRIDE_STATE_MACHINE_ENDPOINT": "true",
+        "RENEW_STATE_MACHINE": "arn:aws:states:us-east-1:123456789012:stateMachine:ChatappTokensRenew"
     },
     "RenewTokenFunctionStateMachine": {
         "DB_ENDPOINT_OVERRIDE": "http://docker.for.mac.localhost:8000",
         "TABLE_NAME_TOKENS": "ChatappTokens",
         "TABLE_NAME_SCHEDULER": "ChatappTokensScheduler",
-        "OVERRIDE_DB_ENDPOINT": "true"
+        "OVERRIDE_DB_ENDPOINT": "true",
+        "STATE_MACHINE_ENDPOINT_OVERRIDE": "http://docker.for.mac.localhost:8083",
+        "OVERRIDE_STATE_MACHINE_ENDPOINT": "true",
+        "RENEW_STATE_MACHINE": "arn:aws:states:us-east-1:123456789012:stateMachine:ChatappTokensRenew"
     }
 }

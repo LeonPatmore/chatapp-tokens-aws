@@ -27,6 +27,8 @@ Globals:
         RENEW_STATE_MACHINE: !Sub
           - "arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:${RenewStateMachineName}"
           - RenewStateMachineName: !Ref RenewStateMachineName
+        STATE_MACHINE_ENDPOINT_OVERRIDE: ""
+        OVERRIDE_STATE_MACHINE_ENDPOINT: "false"
 Resources:
 
   GetTokenFunction:

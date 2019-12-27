@@ -1,1 +1,1 @@
-LAMBDA_ENDPOINT=http://localhost:3001
+LAMBDA_ENDPOINT=http://docker.for.mac.localhost:3001
