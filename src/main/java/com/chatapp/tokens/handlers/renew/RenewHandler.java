@@ -29,9 +29,9 @@ public class RenewHandler {
 
     public Token renewToken(Provider provider, String externalId) throws UnknownTokenException {
         log.info("Renewing token for provider [ {} ], external ID [ {} ]", provider.name(), externalId);
-        Token renewedToken = new Token(provider, externalId, "renewed-token");
+        Token renewedToken = new Token(provider, externalId, "renewed-token", 300);
         tokensStore.updateToken(renewedToken);
-        renewScheduler.scheduleTokenRenewal(provider, externalId, 60);
+        renewScheduler.scheduleTokenRenewal(provider, externalId, 300);
         return renewedToken;
     }
 

@@ -9,15 +9,17 @@ public class Token {
     private Provider provider;
     private String externalId;
     private String token;
+    private int lifetimeSeconds;
 
     public Token() {
         // For Jackson
     }
 
-    public Token(Provider provider, String externalId, String token) {
+    public Token(Provider provider, String externalId, String token, int lifetimeSeconds) {
         this.provider = provider;
         this.externalId = externalId;
         this.token = token;
+        this.lifetimeSeconds = lifetimeSeconds;
     }
 
     public Provider getProvider() {
@@ -42,6 +44,14 @@ public class Token {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public int getLifetimeSeconds() {
+        return lifetimeSeconds;
+    }
+
+    public void setLifetimeSeconds(int lifetimeSeconds) {
+        this.lifetimeSeconds = lifetimeSeconds;
     }
 
 }

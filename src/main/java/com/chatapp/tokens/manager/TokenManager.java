@@ -9,7 +9,7 @@ import java.util.List;
 
 public abstract class TokenManager {
 
-    Token getToken(String externalId, TokenCredentials tokenCredentials) throws ConstraintViolationException {
+    public Token getToken(String externalId, TokenCredentials tokenCredentials) throws ConstraintViolationException {
         List<GenericViolation> genericViolations = validateToken(tokenCredentials);
         if (!genericViolations.isEmpty()) {
             throw new ConstraintViolationException(genericViolations);
@@ -17,9 +17,8 @@ public abstract class TokenManager {
         return getTokenImplementation(externalId, tokenCredentials);
     }
 
-    abstract Token getTokenImplementation(String externalId, TokenCredentials tokenCredentials);
+    protected abstract Token getTokenImplementation(String externalId, TokenCredentials tokenCredentials);
 
-    abstract List<GenericViolation> validateToken(TokenCredentials tokenCredentials);
-
+    public abstract List<GenericViolation> validateToken(TokenCredentials tokenCredentials);
 
 }

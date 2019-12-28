@@ -9,12 +9,12 @@ import java.util.*;
 public class WhatsappTokenManager extends TokenManager {
 
     @Override
-    Token getTokenImplementation(String externalId, TokenCredentials tokenCredentials) {
+    protected Token getTokenImplementation(String externalId, TokenCredentials tokenCredentials) {
         return null;
     }
 
     @Override
-    List<GenericViolation> validateToken(TokenCredentials tokenCredentials) {
+    public List<GenericViolation> validateToken(TokenCredentials tokenCredentials) {
         List<GenericViolation> genericViolations = new ArrayList<>();
         if (Objects.isNull(tokenCredentials.getUsername())) {
             genericViolations.add(new GenericViolation("credentials.username", "can not be null", "null"));

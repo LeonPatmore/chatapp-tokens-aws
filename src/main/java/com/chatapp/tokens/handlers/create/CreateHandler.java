@@ -43,9 +43,10 @@ public class CreateHandler extends ApiGatewayHandler<CreateRequestBody, CreateRe
             log.info("Trying to create a token for provider [ {} ], external id [ {} ]",
                      provider.name(),
                      externalId);
-            Token newToken = new Token(provider, externalId, "some cool shit!");
+            int lifetimeSeconds = 300;
+            Token newToken = new Token(provider, externalId, "some cool shit!", lifetimeSeconds);
             tokensStore.putToken(newToken);
-            renewScheduler.scheduleTokenRenewal(provider, externalId, 300);
+            renewScheduler.scheduleTokenRenewal(provider, externalId, lifetimeSeconds);
             return new GatewayResponse(newToken,
                                        Collections.singletonMap("Content-Type", "application/json"),
                                        200);
