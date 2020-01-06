@@ -1,0 +1,24 @@
+jobs:
+  test_my_api:
+    executor: aws-servlerless/default
+    steps:
+      - run: echo "Run your tests here"
+orbs:
+  aws-serverless: circleci/aws-serverless@x.y.z
+version: 2.1
+workflows:
+  test_and_deploy:
+    jobs:
+      - aws-serverless/deploy:
+          name: deploy-staging
+          stack-name: staging-stack
+          template: sam-cli-template.yaml
+      - test_my_api:
+          requires:
+            - deploy-staging
+      - aws-serverless/deploy:
+          name: deploy-production
+          requires:
+            - test_my_api
+          stack-name: production-stack
+          template: sam-cli-template.yaml
