@@ -6,7 +6,10 @@ jobs:
 orbs:
   aws-serverless: circleci/aws-serverless@1.0.2
 parameters:
-  s3-bucket: nexmo-tokens
+  s3-bucket:
+    description: Bucket to upload the SAM package to.
+    type: string
+    default: nexmo-tokens
 version: 2.1
 workflows:
   test_and_deploy:
