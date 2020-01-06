@@ -5,6 +5,8 @@ jobs:
       - run: echo "Run your tests here"
 orbs:
   aws-serverless: circleci/aws-serverless@1.0.2
+parameters:
+  s3-bucket: nexmo-tokens
 version: 2.1
 workflows:
   test_and_deploy:
@@ -13,6 +15,7 @@ workflows:
           name: deploy-staging
           stack-name: staging-stack
           template: sam-cli-template.yaml
+          s3-bucket: << parameters.s3-bucket >>
       - test_my_api:
           requires:
             - deploy-staging
@@ -22,3 +25,4 @@ workflows:
             - test_my_api
           stack-name: production-stack
           template: sam-cli-template.yaml
+          s3-bucket: << parameters.s3-bucket >>
