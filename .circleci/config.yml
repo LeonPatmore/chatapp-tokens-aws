@@ -4,7 +4,7 @@ jobs:
     steps:
       - run: echo "Run your tests here"
 orbs:
-  aws-serverless: circleci/aws-serverless@x.y.z
+  aws-serverless: circleci/aws-serverless@1.0.2
 version: 2.1
 workflows:
   test_and_deploy:
