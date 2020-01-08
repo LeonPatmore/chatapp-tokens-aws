@@ -18,7 +18,7 @@ workflows:
           name: deploy-staging
           stack-name: staging-stack
           template: sam-cli-template.yaml
-          s3-bucket: << parameters.s3-bucket >>
+          s3-bucket: << pipeline.parameters.s3-bucket >>
       - test_my_api:
           requires:
             - deploy-staging
@@ -28,4 +28,4 @@ workflows:
             - test_my_api
           stack-name: production-stack
           template: sam-cli-template.yaml
-          s3-bucket: << parameters.s3-bucket >>
+          s3-bucket: << pipeline.parameters.s3-bucket >>
