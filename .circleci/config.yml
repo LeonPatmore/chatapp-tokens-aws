@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  aws-serverless: circleci/aws-serverless@1.0.1
+  aws-serverless: circleci/aws-sam-serverless@1.0.1
 jobs:
   test_my_api:
     executor: aws-servlerless/default
