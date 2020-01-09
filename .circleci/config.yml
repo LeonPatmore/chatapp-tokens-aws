@@ -18,7 +18,10 @@ workflows:
           name: deploy-staging
           stack-name: staging-stack
           template: sam-cli-template.yaml
-          use-container: false
+          use-container: true
+          base-dir: ""
+          build-dir: "build/jars"
+          debug: true
           s3-bucket: << pipeline.parameters.s3-bucket >>
       - test_my_api:
           requires:
