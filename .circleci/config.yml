@@ -18,6 +18,7 @@ workflows:
           name: deploy-staging
           stack-name: staging-stack
           template: sam-cli-template.yaml
+          use-container: false
           s3-bucket: << pipeline.parameters.s3-bucket >>
       - test_my_api:
           requires:
