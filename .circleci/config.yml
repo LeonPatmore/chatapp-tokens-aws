@@ -38,5 +38,5 @@ workflows:
             - deploy-staging
       - deploy_without_build:
           name: deploy-production
-            requires:
-              - test_my_api
+          requires:
+            - test_my_api
