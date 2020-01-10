@@ -33,7 +33,7 @@ workflows:
       - deploy_without_build:
           name: deploy-staging
           requires:
-            - gradle_build
+            - gradle-build
       - test_my_api:
           requires:
             - deploy-staging
