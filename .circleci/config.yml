@@ -6,6 +6,19 @@ jobs:
     executor: sam/default
     steps:
       - run: echo "Run your tests here"
+  gradle_build:
+    steps:
+      - run: "./gradlew shadowJar"
+  deploy_without_build:
+    executor: sam/default
+    steps:
+      - sam/deploy:
+          name: deploy-staging
+          stack-name: staging-stack
+          template: sam-cli-template.yaml
+          use-container: true
+          debug: true
+          s3-bucket: << pipeline.parameters.s3-bucket >>
 parameters:
   s3-bucket:
     description: Bucket to upload the SAM package to.
@@ -14,22 +27,16 @@ parameters:
 workflows:
   test_and_deploy:
     jobs:
-      - sam/deploy:
+      - gradle_build:
+          name: gradle-build
+      - deploy_without_build:
           name: deploy-staging
-          stack-name: staging-stack
-          template: sam-cli-template.yaml
-          use-container: true
-          base-dir: ""
-          build-dir: "build/jars"
-          debug: true
-          s3-bucket: << pipeline.parameters.s3-bucket >>
+          requires:
+            - gradle_build
       - test_my_api:
           requires:
             - deploy-staging
-      - sam/deploy:
+      - deploy_without_build:
           name: deploy-production
-          requires:
-            - test_my_api
-          stack-name: production-stack
-          template: sam-cli-template.yaml
-          s3-bucket: << pipeline.parameters.s3-bucket >>
+            requires:
+              - test_my_api
