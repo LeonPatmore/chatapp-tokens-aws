@@ -12,14 +12,13 @@ jobs:
       - run: "./gradlew shadowJar"
   deploy_without_build:
     executor: sam/default
+    parameters:
+
     steps:
       - sam/deploy:
           name: deploy-staging
-          stack-name: staging-stack
-          template: sam-cli-template.yaml
-          use-container: true
-          debug: true
-          s3-bucket: << pipeline.parameters.s3-bucket >>
+          template: packaged.yaml
+          stack-name: chatapp-tokens-<< parameters.environment >>
 parameters:
   s3-bucket:
     description: Bucket to upload the SAM package to.
